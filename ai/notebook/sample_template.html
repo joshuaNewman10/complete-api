@@ -1,0 +1,54 @@
+<style type="text/css">
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 250px));
+        grid-gap: 10px;
+    }
+
+    .section {
+        padding-bottom: 20px;
+        border-bottom: 1px solid grey;
+    }
+
+    .section .grid {
+        grid-template-columns: repeat(auto-fit, minmax(425px, 425px));
+    }
+
+    .article h6 {
+        padding-bottom: 10px;
+    }
+
+    .article .grid .grid-item {
+        box-shadow: 0px 0px 3px 0px rgba(0,0,0,0.2);
+        padding: 5px;
+    }
+
+</style>
+<div data-id="{{ guid }}">
+    <section class='section'>
+    <article class='article'>
+        <h6>Sample</h6>
+        <div class="grid">
+            <div class="grid-item" data-id="{{ sample.guid }}">
+                <p><strong>Sample ID: {{ sample.guid}}</strong></p>
+                <p><strong>Sample Prediction: {{ sample.prediction}}</strong></p>
+                {% if sample.metadata %}
+                <p><strong>Sample Metadata: {{ sample.metadata}}</strong></p>
+                {% endif %}
+                {% if sample.image_url %}
+                <img src="{{ sample.image_url }}" width="250" height="250"/>
+                {% endif %}
+                {% if sample.video_url %}
+                <video width="250" height="250" controls>
+                    <source src="{{ sample.video_url }}"/>
+                </video>
+                {% endif %}
+                {% if sample.text %}
+                <p><strong>{{ sample.text }}</strong></p>
+                {% endif %}
+            </div>
+        </div>
+    </article>
+    </section>
+
+</div>
