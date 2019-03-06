@@ -1,4 +1,8 @@
 class ImageTransformer:
+    """
+    Transforms image into correct format and normalizes it for cnn model
+    """
+
     def __init__(self, width, height, num_channels):
         self.width = width
         self.height = height

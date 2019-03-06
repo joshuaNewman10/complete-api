@@ -1,7 +1,7 @@
 import os
-from uuid import uuid4
 
 from PIL import Image
+from uuid import uuid4
 
 
 class ImageFileSink:

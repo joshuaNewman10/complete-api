@@ -1,19 +1,19 @@
 import logging
+import numpy as np
 import os
 import time
 
 from argparse import ArgumentParser
-
-import numpy as np
 from keras.callbacks import TensorBoard, ReduceLROnPlateau
 from nltk import TweetTokenizer
 from sklearn.externals import joblib
 from tqdm import tqdm
 
-from ai.blog_post_visualize_performance.experiment.text_triplet_hiearchal_rnn_embedding import TextSentimentTripletExperiment
+from ai.blog_post_visualize_performance.experiment.text_triplet_hiearchal_rnn_embedding import \
+    TextSentimentTripletExperiment
 from ai.blog_post_visualize_performance.provider.text_embedding_data import TextEmbeddingDataProvider
 from ai.common.callback.keras import GradientDebugger
-from ai.common.data_provider.text_triplet import TripletDataProvider
+from ai.common.data_provider.text_triplet import TextCharacterLevelTripletDataProvider
 from ai.common.util.io import load_jsonl
 from ai.text.transformer.triplet import TwitterHierarchicalTripletCharacterLevelTransformer, Vocabulary
 
@@ -46,7 +46,8 @@ def load_vocabulary(vocabulary_file_path):
     return joblib.load(vocabulary_file_path)
 
 
-def run_experiment(experiment_directory, training_data_file_path, vocabulary_file_path=None, max_document_length=None, max_token_length=None):
+def run_experiment(experiment_directory, training_data_file_path, vocabulary_file_path=None, max_document_length=None,
+                   max_token_length=None):
     tokenizer = TweetTokenizer()
 
     if vocabulary_file_path:
@@ -58,7 +59,6 @@ def run_experiment(experiment_directory, training_data_file_path, vocabulary_fil
         max_document_length, max_token_length = get_max_length(tokenized_samples)
         vocabulary.fit(all_tokens)
         joblib.dump(vocabulary, os.path.join(experiment_directory, "vocab.pkl"))
-
 
     vocab_size = len(vocabulary)
     experiment = TextSentimentTripletExperiment(experiment_directory=experiment_directory,
@@ -72,13 +72,12 @@ def run_experiment(experiment_directory, training_data_file_path, vocabulary_fil
     batch_size = experiment.batch_size
     max_token_length = experiment.max_token_length
 
-
     transformer = TwitterHierarchicalTripletCharacterLevelTransformer(vocabulary=vocabulary, tokenizer=tokenizer)
 
     log_dir = os.path.join(experiment_directory, experiment_name)
     encoder, triplet = experiment.get_model()
 
-    training_data_provider = TripletDataProvider(
+    training_data_provider = TextCharacterLevelTripletDataProvider(
         jsonl_file=training_data_file_path,
         transformer=transformer,
         batch_size=batch_size,

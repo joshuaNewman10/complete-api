@@ -2,6 +2,9 @@ from abc import abstractmethod
 
 
 class Sink:
+    """
+    Base sink class
+    """
     def filter(self, _):
         return True
 
