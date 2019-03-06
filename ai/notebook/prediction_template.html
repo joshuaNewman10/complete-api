@@ -1,0 +1,99 @@
+<style type="text/css">
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 250px));
+        grid-gap: 10px;
+    }
+
+    .section {
+        padding-bottom: 20px;
+        border-bottom: 1px solid grey;
+    }
+
+    .section .grid {
+        grid-template-columns: repeat(auto-fit, minmax(425px, 425px));
+    }
+
+    .article h6 {
+        padding-bottom: 10px;
+    }
+
+    .article .grid .grid-item {    
+        box-shadow: 0px 0px 3px 0px rgba(0,0,0,0.2);
+        padding: 5px;
+    }
+
+</style>
+<div data-id="{{ guid }}">
+    <section class='section'>
+        <h6>Sequence Data</h6>
+        <div class="grid">
+            <div class='alerts'><strong>Sequence Id</strong>: {{ sequence.guid }}</div>
+            <div class='alerts'><strong>Category</strong>: {{ sequence.category }}</div>
+            <div class='alerts'>Num Alerts: {{ sequence.num_alerts }}</div>
+            <div class='updates'>Num Updates: {{ sequence.num_updates }}</div>
+            <div class='score'>Top {{ sequence.text_category }} Text Score: {{ sequence.text_category_score }}</div>
+            <div class='img-score'>Top {{ sequence.image_category }} Image Score: {{ sequence.image_category_score }}</div>
+            <div class='duration'>Sequence Duration: {{ sequence.sequence_duration }}</div>
+            <div class='users'>Unique Users: {{ sequence.unique_social_user_count }}</div>
+            <div class='users'>Raw Score: {{ sequence.raw_prediction }}</div>
+            <div class='users'>Multisource Probability: {{ sequence.prediction }}</div>
+        </div>
+    </section>
+    {% if alerts %}
+    <article class='article'>
+        <h6>Sitrep Alerts</h6>
+        <div class="grid">
+            {% for alert in alerts %}
+            <div class="grid-item" data-id="{{ alert.guid }}">
+                <p><strong>{{ alert.incident }}</strong></p>
+                <p><strong>{{ alert.category }}</strong></p>
+                {% if alert.details %}
+                <p>{{ alert.details }}</p>
+                {% endif %}
+                <p align="right">{{ alert.local_time }}</p>
+            </div>
+            {% endfor %}
+        </div>
+    </article>
+    {% endif %}
+
+    {% if events %}
+    <h6>Planned Events</h6>
+    <div class="grid">
+        {% for event in events %}
+        <div class="grid-item">
+            <p><strong>{{ event.name }}</strong></p>
+            <p align="right">{{ event.local_time }}</p>
+        </div>
+        {% endfor %}
+        {% endif %}
+    </div>
+
+    {% if updates %}
+    <article class='article'>
+        <h6>Social Updates</h6>
+        <div class="grid">
+            {% for update in updates %}
+            <div class="grid-item" data-id="{{ update.guid }}">
+                <p><strong>{{ update.provider }}, {{ update.type }}, {{ update.account_guid}}</strong></p>
+                <p><strong>{{ update.text_category }} Text Score: {{ update.text_category_score }}</strong></p>
+                <p><strong>{{ update.image_category }} Image Score: {{ update.image_category_score }}</strong></p>
+                {% if update.image_url %}
+                <img src="{{ update.image_url }}" width="250" height="250"/>
+                {% endif %}
+                {% if update.video_url %}
+                <video width="250" height="250" controls>
+                    <source src="{{ update.video_url }}"/>
+                </video>
+                {% endif %}
+                {% if update.text %}
+                <p><strong>{{ update.text }}</strong></p>
+                {% endif %}
+                <p align="right">{{ update.local_time }}</p>
+            </div>
+            {% endfor %}
+            {% endif %}
+        </div>
+    </article>
+</div>
