@@ -8,7 +8,13 @@ class ImageDecodeError(Exception):
 
 
 class ImageLoader:
+    """
+    Helper class to download, transform and encode image
+    """
     def __init__(self, image_size):
+        """
+        :param image_size: tuple of (width, height)
+        """
         self.image_size = tuple(image_size)
 
     def download(self, image_url):
@@ -20,8 +26,10 @@ class ImageLoader:
     def decode(self, content, flags=cv2.IMREAD_COLOR):
         bitmap = numpy.asarray(bytearray(content), dtype=numpy.uint8)
         image = cv2.imdecode(bitmap, flags)
+
         if image is None:
             raise ImageDecodeError('Could not decode image.')
+
         return image
 
     def encode(self, image):

@@ -1,4 +1,3 @@
-import json
 import os
 import logging
 import time
@@ -12,6 +11,9 @@ LOGGER = logging.getLogger(__name__)
 
 
 class Experiment:
+    """
+    Base Experiment class
+    """
     _name = None
     _class_map = None
 
@@ -22,6 +24,10 @@ class Experiment:
     _test_data_predictions_file_path = None
 
     def __init__(self, experiment_directory, evaluator=None):
+        """
+        :param experiment_directory: path to experiment directory to store training data
+        :param evaluator: ai.common.evaluator.Evaluator
+        """
         self._evaluator = evaluator
         experiment_directory = os.path.join(experiment_directory, self._name)
         self.experiment_directory = os.path.join(experiment_directory, str(time.time()))
