@@ -11,7 +11,7 @@ from ai.common.model.training_data import TrainingData
 class MNISTTrainingDataProvider(TrainingDataProvider):
     NUM_CLASSES = 10  # 0 1 2 3 4 5 6 7 8 9
 
-    def __init__(self, height, width, num_channels, image_file_sink, transformer, store_images=False):
+    def __init__(self, height, width, num_channels, transformer, image_file_sink=None, store_images=False):
         self.height = height
         self.width = width
         self.num_channels = num_channels

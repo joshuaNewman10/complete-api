@@ -5,7 +5,7 @@ from argparse import ArgumentParser
 
 from keras.callbacks import TensorBoard, ReduceLROnPlateau
 
-from ai.blog_post_performance.experiment.mnist_keras_convnet import MNISTConvnetKerasImageExperiment
+from ai.blog_post_visualize_performance.experiment.mnist_keras_autoencoder_convnet import MNISTConvnetKerasImageExperiment
 from ai.common.callback.keras import GradientDebugger
 from ai.common.data_provider.mnist import MNISTTrainingDataProvider
 from ai.common.evaluator.multi_class import MultiClassEvaluator
@@ -24,7 +24,7 @@ def run_experiment(experiment_directory):
     num_channels = experiment.NUM_CHANNELS
 
     log_dir = os.path.join(experiment_directory, experiment_name)
-    model = experiment.get_model()
+    autoencoder, classifier = experiment.get_model()
 
     training_data_provider = MNISTTrainingDataProvider(height=height, width=width, num_channels=num_channels)
     training_data = training_data_provider.get_training_data()
@@ -37,12 +37,18 @@ def run_experiment(experiment_directory):
 
     LOGGER.info("Beginning training for experiment %s", experiment)
 
-    history = model.fit(training_data.X_train, training_data.y_train, batch_size=64, epochs=1, verbose=1,
-                        callbacks=callbacks,
-                        validation_data=(training_data.X_validation, training_data.y_validation))
+    history = autoencoder.fit(training_data.X_train,
+                              {'decoder': training_data.X_train, 'classifier': training_data.y_train},
+                              epochs=2,
+                              batch_size=128,
+                              shuffle=True,
+                              validation_data=(training_data.X_test,
+                                               {'decoder': training_data.X_test, 'classifier': training_data.y_test}),
+                              callbacks=callbacks)
+
     history = history.history
 
-    y_test_pred = model.predict(training_data.X_test)
+    y_test_pred = classifier.predict(training_data.X_test)
 
     experiment.persist_test_data_predictions(
         y_test_pred=y_test_pred,
