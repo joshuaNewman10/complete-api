@@ -22,8 +22,9 @@ class MultiClassEvaluator(Evaluator):
         :return: dict of category metrics
         """
         category_metrics = {}
-        indices = list(class_map.values())
         evaluation_metrics = defaultdict(dict)
+
+        indices = list(class_map.values())
 
         true_labels = [np.argmax(labels) for labels in true_labels]
         multi_class_confusion_matrix = self._get_multi_class_confusion_matrix(predictions, true_labels, indices)
@@ -44,25 +45,10 @@ class MultiClassEvaluator(Evaluator):
             category_metrics[category] = self._get_metrics(category_ix, y_true, y_pred, y_proba, class_map,
                                                            multi_class_confusion_matrix)
 
-        evaluation_metrics["coin_toss_data"] = self._get_coin_toss_data(class_map)
         evaluation_metrics["category_metrics"] = category_metrics
         evaluation_metrics["confusion_matrix"] = multi_class_confusion_matrix
 
         return evaluation_metrics
-
-    def _get_coin_toss_data(self, class_map):
-        num_classes = len(class_map)
-        tp_rate = 1 / float(num_classes)
-        fp_rate = 1 - tp_rate
-        tn_rate = 1 / float(num_classes)
-        fn_rate = 1 - tn_rate
-
-        return dict(
-            tp_rate=tp_rate,
-            fp_rate=fp_rate,
-            tn_rate=tn_rate,
-            fn_rate=fn_rate
-        )
 
     def _get_metrics(self, category_ix, y_true, y_pred, y_proba, class_map, multi_class_confusion_matrix):
         """
